@@ -8,7 +8,7 @@ Install PIP if you haven't done so already.
 
 I installed it on mac and this video helped: https://www.youtube.com/watch?v=ioZoC8_Hk7o
 
-After installing PIP, type "Pip install PRAW" in the terminal.
+After installing PIP, type "pip install praw" in the terminal.
 
 You should be good to go after doing so. 
 
