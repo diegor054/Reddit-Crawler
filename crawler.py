@@ -8,6 +8,10 @@ reddit = praw.Reddit(client_id = '',
                      password= '',
                      user_agent= 'crawler')
 
+if reddit.user.me() is None:
+    print("ERROR: Invalid Credentials!")
+    exit()
+
 class redditPost:
     Title =  'DefaultTitle'
     PostID = 'ID'
@@ -18,11 +22,11 @@ class redditPost:
 
 top = reddit.subreddit("CsMajors").top(limit=100)
 checked_ids = set()
-for posts in top: 
-    if post.id in checked_ids:
+for posts in top:
+    if posts.id in checked_ids:
         continue
     else:
-        checked_ids.add(post.id)
+        checked_ids.add(posts.id)
     post = redditPost()
     post.Title = posts.title
     post.PostID = posts.id
