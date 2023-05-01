@@ -17,7 +17,12 @@ class redditPost:
     comments = []
 
 top = reddit.subreddit("CsMajors").top(limit=100)
+checked_ids = set()
 for posts in top: 
+    if post.id in checked_ids:
+        continue
+    else:
+        checked_ids.add(post.id)
     post = redditPost()
     post.Title = posts.title
     post.PostID = posts.id
