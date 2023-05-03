@@ -1,18 +1,18 @@
 import praw
 import json
+from prawcore.exceptions import ResponseException
 from urllib.parse import urlparse
 from urllib.error import URLError
 import urllib.robotparser as urlrp
 
-#Enter your account information here
-reddit = praw.Reddit(client_id = '',
-                     client_secret = '',
-                     username = '',
-                     password= '',
-                     user_agent= 'crawler')
+reddit = praw.Reddit("bot")
 
-if reddit.user.me() is None:
-    print("ERROR: Invalid Credentials!")
+try:
+    if reddit.user.me() is None:
+        print(f"ERROR: Invalid Credentials!")
+        exit()
+except ResponseException as e:
+    print(f"ERROR: Invalid Credentials: {e}")
     exit()
 
 class redditPost:
@@ -26,7 +26,7 @@ class redditPost:
 checked_ids = set()
 rp = urlrp.RobotFileParser()
 
-top = reddit.subreddit("CsMajors").top(limit=13)
+top = reddit.subreddit("CsMajors").top(limit=100)
 
 for posts in top:
     if posts.id in checked_ids:
