@@ -1,9 +1,12 @@
 import praw
 import json
+from prawcore.exceptions import RequestException
 from prawcore.exceptions import ResponseException
 from urllib.parse import urlparse
 from urllib.error import URLError
 import urllib.robotparser as urlrp
+import requests
+from bs4 import BeautifulSoup
 
 reddit = praw.Reddit("bot")
 
@@ -11,7 +14,7 @@ try:
     if reddit.user.me() is None:
         print(f"ERROR: Invalid Credentials!")
         exit()
-except ResponseException as e:
+except (RequestException, ResponseException) as e:
     print(f"ERROR: Invalid Credentials: {e}")
     exit()
 
@@ -21,7 +24,8 @@ class redditPost:
     UpVotes = 'UpVotes'
     PostURL = 'URL'
     PermaLink = 'Link'
-    comments = []
+    Comments = []
+    LinkTitles = []
 
 checked_ids = set()
 rp = urlrp.RobotFileParser()
@@ -42,7 +46,7 @@ for posts in top:
     comments = []
     posts.comments.replace_more(limit=None)
     for comment in posts.comments.list():
-        comment_obj = {"body": comment.body, "links": []}
+        #comment_obj = {"body": comment.body, "links": []}
         for word in comment.body.split():
             if word.startswith("http") or word.startswith("www"):
                 try:
@@ -50,8 +54,18 @@ for posts in top:
                     rp.set_url(url.scheme + "://" + url.netloc + "/robots.txt")
                     rp.read()
                     if rp.can_fetch("*", url.geturl()):
-                        comment_obj["links"].append(word)
+                        #comment_obj["links"].append(word)
                         print(f"Allowed to crawl: {word}")
+                        #if url.path.endswith('.html') or url.path.endswith('.htm'):
+                        page = requests.get(word)
+                        soup = BeautifulSoup(page.content,"html.parser")
+                        title = soup.title
+                        if title is not None:
+                            post.LinkTitles.append(title.string)
+                            print(title.string)
+                        else:
+                            print(f"No title found for {word}")
+                        #print(soup.get_text())
                     else:
                         print(f"Not allowed to crawl: {word}")
                 except (URLError, UnicodeDecodeError, ValueError) as e:
@@ -59,7 +73,7 @@ for posts in top:
                     print(f"Because {e}")
                     continue
         comments.append(comment.body)
-    post.comments = comments
+    post.Comments = comments
     jsonStr = json.dumps(post.__dict__, indent=2)
 
     with open("data.json", "a") as outfile:
