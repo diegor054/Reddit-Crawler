@@ -30,7 +30,7 @@ class redditPost:
 checked_ids = set()
 rp = urlrp.RobotFileParser()
 
-top = reddit.subreddit("CsMajors").top(limit=100)
+top = reddit.subreddit("suns").top(limit=100)
 
 for posts in top:
     if posts.id in checked_ids:
@@ -44,6 +44,7 @@ for posts in top:
     post.PostURL = posts.url
     post.PermaLink = posts.permalink
     comments = []
+    titles = []
     posts.comments.replace_more(limit=None)
     for comment in posts.comments.list():
         #comment_obj = {"body": comment.body, "links": []}
@@ -61,8 +62,8 @@ for posts in top:
                         soup = BeautifulSoup(page.content,"html.parser")
                         title = soup.title
                         if title is not None:
-                            post.LinkTitles.append(title.string)
-                            print(title.string)
+                            titles.append(title.string)
+                            print(f"Title: {title.string}")
                         else:
                             print(f"No title found for {word}")
                         #print(soup.get_text())
@@ -74,6 +75,7 @@ for posts in top:
                     continue
         comments.append(comment.body)
     post.Comments = comments
+    post.LinkTitles = titles
     jsonStr = json.dumps(post.__dict__, indent=2)
 
     with open("data.json", "a") as outfile:
