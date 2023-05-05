@@ -7,6 +7,7 @@ from urllib.error import URLError
 import urllib.robotparser as urlrp
 import requests
 from bs4 import BeautifulSoup
+from http.client import IncompleteRead
 
 reddit = praw.Reddit("bot")
 
@@ -30,7 +31,7 @@ class redditPost:
 checked_ids = set()
 rp = urlrp.RobotFileParser()
 
-top = reddit.subreddit("suns").top(limit=100)
+top = reddit.subreddit("bostonceltics").top(limit=None)
 
 for posts in top:
     if posts.id in checked_ids:
@@ -47,17 +48,18 @@ for posts in top:
     titles = []
     posts.comments.replace_more(limit=None)
     for comment in posts.comments.list():
-        #comment_obj = {"body": comment.body, "links": []}
         for word in comment.body.split():
             if word.startswith("http") or word.startswith("www"):
                 try:
                     url = urlparse(word)
                     rp.set_url(url.scheme + "://" + url.netloc + "/robots.txt")
-                    rp.read()
+                    try:
+                        rp.read()
+                    except IncompleteRead as e:
+                        print(f"Invalid robots.txt: {e}")
+                        continue
                     if rp.can_fetch("*", url.geturl()):
-                        #comment_obj["links"].append(word)
                         print(f"Allowed to crawl: {word}")
-                        #if url.path.endswith('.html') or url.path.endswith('.htm'):
                         page = requests.get(word)
                         soup = BeautifulSoup(page.content,"html.parser")
                         title = soup.title
@@ -66,7 +68,6 @@ for posts in top:
                             print(f"Title: {title.string}")
                         else:
                             print(f"No title found for {word}")
-                        #print(soup.get_text())
                     else:
                         print(f"Not allowed to crawl: {word}")
                 except (URLError, UnicodeDecodeError, ValueError) as e:
