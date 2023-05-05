@@ -20,18 +20,21 @@ except (RequestException, ResponseException) as e:
     exit()
 
 class redditPost:
-    Title =  'DefaultTitle'
+    Title = 'DefaultTitle'
     PostID = 'ID'
-    UpVotes = 'UpVotes'
+    CreatedUTC = None
+    UpVotes = 0
+    UpVotesRatio = None
     PostURL = 'URL'
     PermaLink = 'Link'
+    SelfText = 'DefaultSelfText'
     Comments = []
     LinkTitles = []
 
 checked_ids = set()
 rp = urlrp.RobotFileParser()
 
-top = reddit.subreddit("bostonceltics").top(limit=None)
+top = reddit.subreddit("suns").top(limit=1000)
 
 for posts in top:
     if posts.id in checked_ids:
@@ -41,9 +44,12 @@ for posts in top:
     post = redditPost()
     post.Title = posts.title
     post.PostID = posts.id
+    post.CreatedUTC = posts.created_utc
     post.UpVotes = posts.score
+    post.UpVotesRatio = posts.upvote_ratio
     post.PostURL = posts.url
     post.PermaLink = posts.permalink
+    post.SelfText = posts.selftext
     comments = []
     titles = []
     posts.comments.replace_more(limit=None)
