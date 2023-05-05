@@ -7,6 +7,7 @@ from urllib.error import URLError
 import urllib.robotparser as urlrp
 import requests
 from bs4 import BeautifulSoup
+from bs4.builder import ParserRejectedMarkup
 from http.client import IncompleteRead
 import sys
 
@@ -59,7 +60,7 @@ def get_title(word):
         else:
             print(f"Not allowed to crawl: {word}")
             return None
-    except (URLError, UnicodeDecodeError, ValueError) as e:
+    except (URLError, UnicodeDecodeError, ValueError, ParserRejectedMarkup) as e:
         print(f"Invalid URL: {word}")
         print(f"Because {e}")
         return None
