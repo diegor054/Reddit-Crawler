@@ -86,11 +86,11 @@ for posts in top:
     titles = []
     posts.comments.replace_more(limit=None)
     for comment in posts.comments.list():
-        for word in comment.body.split():
-            if word.startswith("http") or word.startswith("www"):
-                title = get_title(word)
-                if title is not None:
-                    titles.append(title)
+    #    for word in comment.body.split():
+    #        if word.startswith("http") or word.startswith("www"):
+    #            title = get_title(word)
+    #            if title is not None:
+    #                titles.append(title)
         comments.append(comment.body)
     post.Comments = comments
     post.CommentLinkTitles = titles
