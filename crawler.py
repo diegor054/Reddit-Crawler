@@ -8,6 +8,7 @@ import urllib.robotparser as urlrp
 import requests
 from bs4 import BeautifulSoup
 from http.client import IncompleteRead
+import sys
 
 reddit = praw.Reddit("bot")
 
@@ -63,7 +64,7 @@ def get_title(word):
         print(f"Because {e}")
         return None
 
-top = reddit.subreddit("suns").top(limit=1000)
+top = reddit.subreddit(sys.argv[1]).top(limit=int(sys.argv[2]))
 
 for posts in top:
     if posts.id in checked_ids:
@@ -94,5 +95,5 @@ for posts in top:
     post.CommentLinkTitles = titles
     jsonStr = json.dumps(post.__dict__, indent=None)
 
-    with open("data.json", "a") as outfile:
+    with open(sys.argv[3], "a") as outfile:
         outfile.write(jsonStr + '\n')
