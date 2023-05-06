@@ -40,6 +40,9 @@ rp = urlrp.RobotFileParser()
 def get_title(word):
     try:
         url = urlparse(word)
+        if url.netloc == "i.redd.it" or url.netloc == "v.redd.it" or url.netloc == "www.reddit.com":
+            print(f"There is no title for {word}")
+            return None
         rp.set_url(url.scheme + "://" + url.netloc + "/robots.txt")
         try:
             rp.read()
