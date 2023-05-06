@@ -2,15 +2,13 @@
 
 ## Instructions 
 
-### Setting up PRAW
+### Setting up PRAW and BeautifulSoup4
 
 Install PIP if you haven't done so already. 
 
-I installed it on mac and this video helped: https://www.youtube.com/watch?v=ioZoC8_Hk7o
-
 After installing PIP, type "pip install praw" in the terminal.
 
-You should be good to go after doing so. 
+ After, type "pip install  type "pip install BeautifulSoup4" in the terminal."
 
 
 ### Reddit
